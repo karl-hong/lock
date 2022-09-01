@@ -23,6 +23,7 @@
 
 /* USER CODE BEGIN 0 */
 #include <stdio.h>
+#include "common.h"
 /* USER CODE END 0 */
 
 /*----------------------------------------------------------------------------*/
@@ -69,14 +70,31 @@ void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 2 */
+inline void lock_stop_detect(void)
+{
+	if(lock.lockDetectState1  && !lock.lockDetectState2) 		lock.lockState = 0;//unlock state
+	else if(!lock.lockDetectState1 && lock.lockDetectState2)	lock.lockState = 1;//lock state
+
+	if(LOCK_TASK_STATE_FORWARD == lock.lockTaskState && lock.lockState){
+		/* totally lock and stop motor */
+		appSetMotorState(MOTOR_STOP);
+		lock.lockTaskState = LOCK_TASK_STATE_IDLE;
+	}else if(LOCK_TASK_STATE_BACKWARD == lock.lockTaskState && !lock.lockState){
+		/* totally unlock and stop motor */
+		appSetMotorState(MOTOR_STOP);
+		lock.lockTaskState = LOCK_TASK_STATE_IDLE;
+	}
+}
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(LockStateDetect1_Pin == GPIO_Pin){
-		//Sensor.smoke_sensor_state = HAL_GPIO_ReadPin(GPIOB, SMOKE_DET_Pin);
+		lock.lockDetectState1 = HAL_GPIO_ReadPin(GPIOB, LockStateDetect1_Pin);
+		lock_stop_detect();
 	}else if(LockStateDetect2_Pin == GPIO_Pin){
-		//Sensor.displacement_sensor_state = HAL_GPIO_ReadPin(GPIOB, MOVE_DET_Pin);
+		lock.lockDetectState2 = HAL_GPIO_ReadPin(GPIOB, LockStateDetect2_Pin);
+		lock_stop_detect();
 	}else if(GunStateDetect_Pin == GPIO_Pin){
-		//Sensor.water_sensor_state = HAL_GPIO_ReadPin(GPIOB, WATER_DET_Pin);
+		lock.gunState = HAL_GPIO_ReadPin(GPIOB, GunStateDetect_Pin);
 	}
 }
 
@@ -123,6 +141,41 @@ void appSetMotorState(uint8_t state)
 			HAL_GPIO_WritePin(GPIOB, MotorB_Pin, GPIO_PIN_RESET);
 			break;
 		}
+	}
+}
+
+void MotorTask(void)
+{
+	static uint8_t oldState = LOCK_TASK_STATE_IDLE;
+	switch(lock.lockTaskState){
+		case LOCK_TASK_STATE_FORWARD:{
+			if(oldState != LOCK_TASK_STATE_FORWARD){
+				oldState = LOCK_TASK_STATE_FORWARD;
+				appSetMotorState(MOTOR_FORWARD);
+			}
+			break;
+		}
+
+		case LOCK_TASK_STATE_BACKWARD:{
+			if(oldState != LOCK_TASK_STATE_BACKWARD){
+				oldState = LOCK_TASK_STATE_BACKWARD;
+				appSetMotorState(MOTOR_BACK);
+			}
+			break;
+		}
+
+		case LOCK_TASK_STATE_STOP:{
+			if(oldState != LOCK_TASK_STATE_STOP){
+				oldState = LOCK_TASK_STATE_STOP;
+				appSetMotorState(MOTOR_STOP);
+			}
+			break;
+		}
+
+		case LOCK_TASK_STATE_IDLE:
+		default:
+			oldState = LOCK_TASK_STATE_IDLE;
+			break;
 	}
 }
 /* USER CODE END 2 */
