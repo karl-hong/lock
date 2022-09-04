@@ -45,20 +45,20 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOB, GreenLed_Pin|RedLed_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, MotorB_Pin|MotorA_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PB0 PB1 PB3 PB4 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_4;
+  /*Configure GPIO pins : PBPin PBPin PBPin PBPin */
+  GPIO_InitStruct.Pin = GreenLed_Pin|RedLed_Pin|MotorB_Pin|MotorA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB6 PB7 PB8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8;
+  /*Configure GPIO pins : PBPin PBPin PBPin */
+  GPIO_InitStruct.Pin = LockStateDetect1_Pin|LockStateDetect2_Pin|GunStateDetect_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -70,20 +70,34 @@ void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 2 */
-inline void lock_stop_detect(void)
+void lock_stop_detect(void)
 {
+	static uint8_t lastState = 0;
+	uint8_t stateChange = 0;
 	if(lock.lockDetectState1  && !lock.lockDetectState2) 		lock.lockState = 0;//unlock state
 	else if(!lock.lockDetectState1 && lock.lockDetectState2)	lock.lockState = 1;//lock state
+	
+	if(lastState != lock.lockState){
+		lastState = lock.lockState;
+		stateChange = 1;
+	}
 
-	if(LOCK_TASK_STATE_FORWARD == lock.lockTaskState && lock.lockState){
+	if(LOCK_TASK_STATE_BACKWARD == lock.lockTaskState && lock.lockState){
 		/* totally lock and stop motor */
 		appSetMotorState(MOTOR_STOP);
 		lock.lockTaskState = LOCK_TASK_STATE_IDLE;
-	}else if(LOCK_TASK_STATE_BACKWARD == lock.lockTaskState && !lock.lockState){
+	}else if(LOCK_TASK_STATE_FORWARD == lock.lockTaskState && !lock.lockState){
 		/* totally unlock and stop motor */
 		appSetMotorState(MOTOR_STOP);
 		lock.lockTaskState = LOCK_TASK_STATE_IDLE;
+	}else if(LOCK_TASK_STATE_IDLE == lock.lockTaskState && lock.isReport && stateChange){
+		lock.cmdControl.reportOperateStatus.sendCmdEnable = 1;
+		lock.cmdControl.reportOperateStatus.sendCmdDelay = 0;
 	}
+
+	printf("lock state: %d\r\n", lock.lockState);
+	printf("detect1: %d\r\n", lock.lockDetectState1);
+	printf("detect2: %d\r\n", lock.lockDetectState2);
 }
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
@@ -95,6 +109,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		lock_stop_detect();
 	}else if(GunStateDetect_Pin == GPIO_Pin){
 		lock.gunState = HAL_GPIO_ReadPin(GPIOB, GunStateDetect_Pin);
+		printf("gunState: %d\r\n", lock.gunState );
 	}
 }
 
