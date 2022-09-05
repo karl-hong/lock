@@ -31,6 +31,7 @@ typedef struct {
     cmd_setting_t reportOperateStatus;
 }cmd_control_t;
 
+
 typedef struct {
     uint8_t gunState;
     uint8_t lockDetectState1;
@@ -43,6 +44,8 @@ typedef struct {
     uint8_t  alarmStatus;
     uint8_t  isReport;
     uint8_t  address;
+    uint8_t HoldOnDetectEnable;
+    uint16_t HoldOnLatencyCnt;
     uint32_t uid0;
     uint32_t uid1;
     uint32_t uid2;

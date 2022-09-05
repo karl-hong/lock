@@ -74,8 +74,20 @@ void lock_stop_detect(void)
 {
 	static uint8_t lastState = 0;
 	uint8_t stateChange = 0;
-	if(lock.lockDetectState1  && !lock.lockDetectState2) 		lock.lockState = 0;//unlock state
-	else if(!lock.lockDetectState1 && lock.lockDetectState2)	lock.lockState = 1;//lock state
+	if(lock.lockDetectState1  && !lock.lockDetectState2){
+		lock.lockState = 0;//unlock state
+		lock.HoldOnDetectEnalbe = 0;
+		lock.HoldOnLatencyCnt = 0;
+	}else if(!lock.lockDetectState1 && lock.lockDetectState2){
+		lock.lockState = 1;//lock state
+		lock.HoldOnDetectEnalbe = 0;
+		lock.HoldOnLatencyCnt = 0;
+	}else{
+		if(lock.HoldOnDetectEnalbe == 0){
+			lock.HoldOnDetectEnalbe = 1;
+			lock.HoldOnLatencyCnt = 0;
+		}
+	}
 	
 	if(lastState != lock.lockState){
 		lastState = lock.lockState;
@@ -94,10 +106,6 @@ void lock_stop_detect(void)
 		lock.cmdControl.reportOperateStatus.sendCmdEnable = 1;
 		lock.cmdControl.reportOperateStatus.sendCmdDelay = 0;
 	}
-
-	printf("lock state: %d\r\n", lock.lockState);
-	printf("detect1: %d\r\n", lock.lockDetectState1);
-	printf("detect2: %d\r\n", lock.lockDetectState2);
 }
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
