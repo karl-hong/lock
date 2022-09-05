@@ -76,15 +76,17 @@ void lock_stop_detect(void)
 	uint8_t stateChange = 0;
 	if(lock.lockDetectState1  && !lock.lockDetectState2){
 		lock.lockState = 0;//unlock state
-		lock.HoldOnDetectEnalbe = 0;
-		lock.HoldOnLatencyCnt = 0;
+		if(lock.HoldOnDetectEnable == 0){
+			lock.HoldOnDetectEnable = 1;
+			lock.HoldOnLatencyCnt = 0;
+		}
 	}else if(!lock.lockDetectState1 && lock.lockDetectState2){
 		lock.lockState = 1;//lock state
-		lock.HoldOnDetectEnalbe = 0;
+		lock.HoldOnDetectEnable = 0;
 		lock.HoldOnLatencyCnt = 0;
 	}else{
-		if(lock.HoldOnDetectEnalbe == 0){
-			lock.HoldOnDetectEnalbe = 1;
+		if(lock.HoldOnDetectEnable == 0){
+			lock.HoldOnDetectEnable = 1;
 			lock.HoldOnLatencyCnt = 0;
 		}
 	}
@@ -117,7 +119,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		lock_stop_detect();
 	}else if(GunStateDetect_Pin == GPIO_Pin){
 		lock.gunState = HAL_GPIO_ReadPin(GPIOB, GunStateDetect_Pin);
-		printf("gunState: %d\r\n", lock.gunState );
+		static uint8_t lastGunState = 0;
+		if(lastGunState != lock.gunState){
+			lastGunState = lock.gunState;
+			lock.ledTask.state = LED_TASK_STATE_IDLE;
+		}
 	}
 }
 
@@ -126,13 +132,13 @@ void appSetLedState(uint8_t led, uint8_t state)
 	switch(led){
 		case GREEN_LED:{
 			if(state) HAL_GPIO_WritePin(GPIOB, GreenLed_Pin, GPIO_PIN_SET);
-			else			HAL_GPIO_WritePin(GPIOB, GreenLed_Pin, GPIO_PIN_RESET);
+			else	  HAL_GPIO_WritePin(GPIOB, GreenLed_Pin, GPIO_PIN_RESET);
 			break;
 		}
 		
 		case RED_LED:{
 			if(state) HAL_GPIO_WritePin(GPIOB, RedLed_Pin, GPIO_PIN_SET);
-			else			HAL_GPIO_WritePin(GPIOB, RedLed_Pin, GPIO_PIN_RESET);
+			else	  HAL_GPIO_WritePin(GPIOB, RedLed_Pin, GPIO_PIN_RESET);
 			break;
 		}
 		
@@ -199,6 +205,49 @@ void MotorTask(void)
 		default:
 			oldState = LOCK_TASK_STATE_IDLE;
 			break;
+	}
+}
+
+void Led_Task(void)
+{
+	switch(lock.ledTask.state){
+		case LED_TASK_STATE_FLASH:{
+			if(lock.ledFlashStatus){
+				if(lock.gunState){
+					if(lock.ledTask.flashOn)	appSetLedState(GREEN_LED, LED_ON);
+					else						appSetLedState(GREEN_LED, LED_OFF);
+					appSetLedState(RED_LED, LED_OFF);
+				}else{
+					appSetLedState(GREEN_LED, LED_OFF);
+					if(lock.ledTask.flashOn)	appSetLedState(RED_LED, LED_ON);
+					else						appSetLedState(RED_LED, LED_OFF);
+				}
+			}else{
+				if(lock.gunState){
+					appSetLedState(GREEN_LED, LED_ON);
+					appSetLedState(RED_LED, LED_OFF);
+				}else{
+					appSetLedState(GREEN_LED, LED_OFF);
+					appSetLedState(RED_LED, LED_ON);
+				}
+			}
+			break;
+		}
+
+		case LED_TASK_STATE_IDLE:{
+			if(lock.gunState){
+				appSetLedState(GREEN_LED, LED_ON);
+				appSetLedState(RED_LED, LED_OFF);
+			}else{
+				appSetLedState(GREEN_LED, LED_OFF);
+				appSetLedState(RED_LED, LED_ON);
+			}
+			break;
+		}
+
+		default:{
+			break;
+		}
 	}
 }
 /* USER CODE END 2 */

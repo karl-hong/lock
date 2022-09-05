@@ -56,6 +56,7 @@ void MX_GPIO_Init(void);
 void appSetLedState(uint8_t led, uint8_t state);
 void appSetMotorState(uint8_t state);
 void MotorTask(void);
+void Led_Task(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

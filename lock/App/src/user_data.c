@@ -93,6 +93,10 @@ out:
     /* set dev state here */
     if(lockSetState)    lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock
     else                lock.lockTaskState = LOCK_TASK_STATE_FORWARD;//unlock
+
+    /* set led state here */
+    lock.ledTask.state = LED_TASK_STATE_FLASH;
+    
     /* send ack msg here */
     if(ack){
         lock.cmdControl.operateResult.sendCmdEnable = CMD_ENABLE;

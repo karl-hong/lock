@@ -11,6 +11,7 @@
 #define DEFAULT_LOCK_REPORT         (1)
 
 #define DELAY_BASE                  (10)//100ms*10 = 1s
+#define FLASH_FREQ                  (1)
 
 enum {
     CMD_DISABLE = 0,
@@ -31,6 +32,11 @@ typedef struct {
     cmd_setting_t reportOperateStatus;
 }cmd_control_t;
 
+typedef struct {
+    uint8_t state;
+    uint8_t flashOn;
+    uint16_t flashCnt;
+}led_task_ctrl_t;
 
 typedef struct {
     uint8_t gunState;
@@ -38,7 +44,6 @@ typedef struct {
     uint8_t lockDetectState2;
     uint8_t lockState;
     uint8_t lockTaskState;
-    uint32_t lockDelay;
     uint16_t lockReplyDelay;
     uint8_t  ledFlashStatus;
     uint8_t  alarmStatus;
@@ -46,10 +51,12 @@ typedef struct {
     uint8_t  address;
     uint8_t HoldOnDetectEnable;
     uint16_t HoldOnLatencyCnt;
+    uint32_t lockDelay;
     uint32_t uid0;
     uint32_t uid1;
     uint32_t uid2;
     cmd_control_t cmdControl;
+    led_task_ctrl_t ledTask;
 }lock_ctrl_t;
 
 enum {
@@ -57,6 +64,11 @@ enum {
     LOCK_TASK_STATE_FORWARD,
     LOCK_TASK_STATE_BACKWARD,
     LOCK_TASK_STATE_STOP,
+};
+
+enum {
+    LED_TASK_STATE_IDLE = 0,
+    LED_TASK_STATE_FLASH,
 };
 
 typedef struct {

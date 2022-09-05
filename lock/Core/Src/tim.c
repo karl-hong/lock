@@ -38,9 +38,9 @@ void MX_TIM14_Init(void)
 
   /* USER CODE END TIM14_Init 1 */
   htim14.Instance = TIM14;
-  htim14.Init.Prescaler = 499;
+  htim14.Init.Prescaler = 1000;
   htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim14.Init.Period = 16666;
+  htim14.Init.Period = 1201;
   htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim14) != HAL_OK)
@@ -93,6 +93,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 }
 
 /* USER CODE BEGIN 1 */
+extern void appSetLedState(uint8_t led, uint8_t state);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if(htim->Instance == TIM14){
@@ -109,14 +110,26 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
       if(lock.cmdControl.reportOperateStatus.sendCmdDelay > 0) lock.cmdControl.reportOperateStatus.sendCmdDelay --;
 
-      if(lock.HoldOnDetectEnalbe){
+      if(lock.HoldOnDetectEnable){
           lock.HoldOnLatencyCnt ++;
           if(lock.HoldOnLatencyCnt >= (lock.lockDelay * DELAY_BASE)){
-              lock.HoldOnDetectEnalbe = 0;
+              lock.HoldOnDetectEnable = 0;
               lock.HoldOnLatencyCnt = 0;
               lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock device
           }
-      } 
+      }
+
+      if(lock.ledTask.state == LED_TASK_STATE_FLASH){
+          lock.ledTask.flashCnt ++;
+          if(FLASH_FREQ <= lock.ledTask.flashCnt){
+              lock.ledTask.flashCnt = 0;
+              lock.ledTask.flashOn = !lock.ledTask.flashOn;
+          }
+      }else{
+        lock.ledTask.flashOn = 0;
+        lock.ledTask.flashCnt = 0;
+      }
+			
     }
 }
 /* USER CODE END 1 */
