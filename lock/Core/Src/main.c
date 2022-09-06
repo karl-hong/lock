@@ -106,6 +106,7 @@ int main(void)
 		user_protocol_handle();
     MotorTask();
     Led_Task();
+		Auto_Lock_Task();
     user_reply_handle();
   }
   /* USER CODE END 3 */
