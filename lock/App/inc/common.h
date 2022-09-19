@@ -71,6 +71,11 @@ enum {
     LED_TASK_STATE_FLASH,
 };
 
+enum {
+    LOCK_STATE_UNLOCK = 0,
+    LOCK_STATE_LOCK,
+};
+
 typedef struct {
     uint16_t magic;
     uint16_t address;

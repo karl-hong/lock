@@ -75,10 +75,10 @@ void lock_stop_detect(void)
 	static uint8_t lastState = 0;
 	uint8_t stateChange = 0;
 	if(lock.lockDetectState1  && !lock.lockDetectState2){
-		lock.lockState = 0;//unlock state
+		lock.lockState = LOCK_STATE_UNLOCK;//unlock state
 
 	}else if(!lock.lockDetectState1 && lock.lockDetectState2){
-		lock.lockState = 1;//lock state
+		lock.lockState = LOCK_STATE_LOCK;//lock state
 	}
 	
 	if(lastState != lock.lockState){
@@ -257,5 +257,13 @@ void Auto_Lock_Task(void)
 			lock.HoldOnLatencyCnt = 0;
 		}
 	}
+}
+
+void lock_state_init(void)
+{
+	lock.lockDetectState1 = HAL_GPIO_ReadPin(GPIOB, LockStateDetect1_Pin);
+	lock.lockDetectState2 = HAL_GPIO_ReadPin(GPIOB, LockStateDetect2_Pin);
+	lock.gunState = HAL_GPIO_ReadPin(GPIOB, GunStateDetect_Pin);
+	lock_stop_detect();
 }
 /* USER CODE END 2 */

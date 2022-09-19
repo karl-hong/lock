@@ -94,6 +94,7 @@ int main(void)
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
   user_database_init();
+	lock_state_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */

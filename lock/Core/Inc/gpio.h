@@ -58,6 +58,7 @@ void appSetMotorState(uint8_t state);
 void MotorTask(void);
 void Led_Task(void);
 void Auto_Lock_Task(void);
+void lock_state_init(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

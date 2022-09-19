@@ -26,12 +26,14 @@ Project File Date:  09/06/2022
 
 <h2>Output:</h2>
 Build target 'lock'
-compiling main.c...
-compiling gpio.c...
+compiling user_data.c...
+..\App\src\user_data.c(452): warning:  #223-D: function "memset" declared implicitly
+      memset((uint8_t *)&lock, 0, sizeof(lock));
+..\App\src\user_data.c: 1 warning, 0 errors
 linking...
-Program Size: Code=13212 RO-data=2176 RW-data=28 ZI-data=2628  
+Program Size: Code=13284 RO-data=2176 RW-data=28 ZI-data=2628  
 FromELF: creating hex file...
-"lock\lock.axf" - 0 Error(s), 0 Warning(s).
+"lock\lock.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 

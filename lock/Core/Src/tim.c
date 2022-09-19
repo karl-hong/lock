@@ -115,7 +115,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
           if(lock.HoldOnLatencyCnt >= (lock.lockDelay * DELAY_BASE)){
               lock.HoldOnDetectEnable = 0;
               lock.HoldOnLatencyCnt = 0;
-              lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock device
+              if(lock.lockState == LOCK_STATE_UNLOCK) lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock device
           }
       }
 
