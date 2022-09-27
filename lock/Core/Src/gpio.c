@@ -94,9 +94,19 @@ void lock_stop_detect(void)
 		/* totally unlock and stop motor */
 		appSetMotorState(MOTOR_STOP);
 		lock.lockTaskState = LOCK_TASK_STATE_IDLE;
-	}else if(LOCK_TASK_STATE_IDLE == lock.lockTaskState && lock.isReport && stateChange){
-		lock.cmdControl.reportOperateStatus.sendCmdEnable = 1;
-		lock.cmdControl.reportOperateStatus.sendCmdDelay = 0;
+	}else if(LOCK_TASK_STATE_IDLE == lock.lockTaskState && stateChange){
+		if(lock.isReport){
+			lock.cmdControl.reportOperateStatus.sendCmdEnable = 1;
+			lock.cmdControl.reportOperateStatus.sendCmdDelay = 0;
+		}
+		/* manual operate alarm */
+		if(lock.lockState == LOCK_STATE_LOCK){
+			lock.alarmStatus = LOCK_ALARM_LOCK;
+		}else{
+			lock.alarmStatus = LOCK_ALARM_UNLOCK;
+		}
+		/* save database */
+		user_database_save();
 	}
 }
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)

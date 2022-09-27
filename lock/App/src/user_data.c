@@ -282,11 +282,11 @@ out:
     /* send ack msg here */
     if(ack){
         /* clear device alarm setting here */
-        lock.alarmStatus = 0;
+        lock.alarmStatus = LOCK_ALARM_NONE;
         lock.cmdControl.alarmSetting.sendCmdEnable = CMD_ENABLE;
         lock.cmdControl.alarmSetting.sendCmdDelay = 0;
     }else{
-        lock.alarmStatus = 0;
+        lock.alarmStatus = LOCK_ALARM_NONE;
     }
 
     user_database_save();
@@ -467,6 +467,7 @@ void user_database_init(void)
         lock.lockReplyDelay = DEFAULT_LOCK_REPLY_DELAY;
         lock.isReport = DEFAULT_LOCK_REPORT;
         lock.ledFlashStatus = DEFAULT_LOCK_LED_FLASH;
+        lock.alarmStatus = DEFAULT_LOCK_ALARM_STATUS;
         user_database_save();
     }else{
         printf("Read database from flash!!!\r\n");
@@ -476,6 +477,7 @@ void user_database_init(void)
         lock.lockReplyDelay = readDataBase.lockReplyDelay;
         lock.isReport = (uint8_t)readDataBase.isReport;
         lock.ledFlashStatus = (uint8_t)readDataBase.ledFlash;
+        lock.alarmStatus = (uint8_t)readDataBase.alarmStatus;
     }
 
     printf("Chip uuid: 0x%x%x%x\r\n", lock.uid0, lock.uid1, lock.uid2);
@@ -484,6 +486,7 @@ void user_database_init(void)
     printf("ledFlash: 0x%X\r\n", lock.ledFlashStatus);
     printf("lockDelay: 0x%X\r\n", lock.lockDelay);
     printf("lockReplyDelay: 0x%X\r\n", lock.lockReplyDelay);
+    printf("alarm status: 0x%X\r\n", lock.alarmStatus);
 }
 
 void user_database_save(void)
@@ -503,6 +506,7 @@ void user_database_save(void)
     writeDataBase.lockDelayLow = lock.lockDelay & 0xffff;
     writeDataBase.lockDelayHigh = (lock.lockDelay >> 16) & 0xffff;
     writeDataBase.lockReplyDelay = lock.lockReplyDelay;
+    writeDataBase.alarmStatus = lock.alarmStatus;
 
     HAL_FLASH_Unlock();
 

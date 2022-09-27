@@ -9,6 +9,7 @@
 #define DEFAULT_LOCK_REPLY_DELAY    (2)
 #define DEFAULT_LOCK_LED_FLASH      (0)
 #define DEFAULT_LOCK_REPORT         (1)
+#define DEFAULT_LOCK_ALARM_STATUS   (0)
 
 #define DELAY_BASE                  (10)//100ms*10 = 1s
 #define FLASH_FREQ                  (1)
@@ -76,6 +77,12 @@ enum {
     LOCK_STATE_LOCK,
 };
 
+enum {
+    LOCK_ALARM_NONE = 0,
+    LOCK_ALARM_UNLOCK,
+    LOCK_ALARM_LOCK,
+};
+
 typedef struct {
     uint16_t magic;
     uint16_t address;
@@ -84,6 +91,7 @@ typedef struct {
     uint16_t lockDelayLow;
     uint16_t lockDelayHigh;
     uint16_t lockReplyDelay;
+    uint16_t alarmStatus;
 }database_t;
 
 
