@@ -24,6 +24,8 @@ void onReportClearDevAlarmSetting(void);
 
 void onReportDevAlarm(uint8_t alarmType);
 
+void onReportAutoLockAlarm(void);
+
 void user_database_init(void);
 
 void user_database_save(void);

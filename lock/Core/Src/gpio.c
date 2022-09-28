@@ -90,15 +90,24 @@ void lock_stop_detect(void)
 		/* totally lock and stop motor */
 		appSetMotorState(MOTOR_STOP);
 		lock.lockTaskState = LOCK_TASK_STATE_IDLE;
+		if(lock.autoLockEnable && lock.isReport){
+			lock.cmdControl.reportAutoLockAlarm.sendCmdEnable = 1;
+			lock.cmdControl.reportAutoLockAlarm.sendCmdDelay = 0;
+		}
+		lock.autoLockEnable = 0;
 	}else if(LOCK_TASK_STATE_FORWARD == lock.lockTaskState && !lock.lockState){
 		/* totally unlock and stop motor */
 		appSetMotorState(MOTOR_STOP);
 		lock.lockTaskState = LOCK_TASK_STATE_IDLE;
+		lock.autoLockEnable = 0;
 	}else if(LOCK_TASK_STATE_IDLE == lock.lockTaskState && stateChange){
 		if(lock.isReport){
 			lock.cmdControl.reportOperateStatus.sendCmdEnable = 1;
 			lock.cmdControl.reportOperateStatus.sendCmdDelay = 0;
 		}
+
+		lock.autoLockEnable = 0;
+		
 		/* manual operate alarm */
 		if(lock.lockState == LOCK_STATE_LOCK){
 			lock.alarmStatus = LOCK_ALARM_LOCK;

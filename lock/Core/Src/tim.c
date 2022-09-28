@@ -110,12 +110,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
       if(lock.cmdControl.reportOperateStatus.sendCmdDelay > 0) lock.cmdControl.reportOperateStatus.sendCmdDelay --;
 
+      if(lock.cmdControl.reportAutoLockAlarm.sendCmdDelay > 0) lock.cmdControl.reportAutoLockAlarm.sendCmdDelay --;
+
       if(lock.HoldOnDetectEnable){
           lock.HoldOnLatencyCnt ++;
           if(lock.HoldOnLatencyCnt >= (lock.lockDelay * DELAY_BASE)){
               lock.HoldOnDetectEnable = 0;
               lock.HoldOnLatencyCnt = 0;
-              if(lock.lockState == LOCK_STATE_UNLOCK) lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock device
+              if(lock.lockState == LOCK_STATE_UNLOCK){
+                lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock device
+                lock.autoLockEnable = 1;
+              }
           }
       }
 

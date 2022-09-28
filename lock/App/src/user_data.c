@@ -100,6 +100,8 @@ out:
         lock.ledTask.state = LED_TASK_STATE_FLASH;
     }
     
+    lock.autoLockEnable = 0;
+
     /* send ack msg here */
     if(ack){
         lock.cmdControl.operateResult.sendCmdEnable = CMD_ENABLE;
@@ -437,6 +439,27 @@ void onReportDevAlarm(uint8_t alarmType)
     user_protocol_send_data(CMD_QUERY, OPTION_MANUAL_ALARM, buffer, pos);     
 }
 
+void onReportAutoLockAlarm(void)
+{
+    uint8_t buffer[23];
+    uint8_t pos = 0;
+    buffer[pos++] = lock.address;
+    buffer[pos++] = (lock.uid0 >> 24)& 0xff;
+    buffer[pos++] = (lock.uid0 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid0 >> 8) & 0xff;
+    buffer[pos++] = lock.uid0 & 0xff;
+    buffer[pos++] = (lock.uid1 >> 24)& 0xff;
+    buffer[pos++] = (lock.uid1 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid1 >> 8) & 0xff;
+    buffer[pos++] = lock.uid1 & 0xff;
+    buffer[pos++] = (lock.uid2 >> 24)& 0xff;
+    buffer[pos++] = (lock.uid2 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid2 >> 8) & 0xff;
+    buffer[pos++] = lock.uid2 & 0xff;
+
+    user_protocol_send_data(CMD_QUERY, OPTION_AUTO_LOCK_ALARM, buffer, pos);    
+}
+
 uint16_t user_read_flash(uint32_t address)
 {
     return *(__IO uint16_t*)address;
@@ -560,6 +583,11 @@ void user_reply_handle(void)
     if(lock.cmdControl.reportOperateStatus.sendCmdEnable && !lock.cmdControl.reportOperateStatus.sendCmdDelay){
         lock.cmdControl.reportOperateStatus.sendCmdEnable = CMD_DISABLE;
         onReportDevAlarm(lock.lockState);
+    }
+
+    if(lock.cmdControl.reportAutoLockAlarm.sendCmdEnable && !lock.cmdControl.reportAutoLockAlarm.sendCmdDelay){
+        lock.cmdControl.reportAutoLockAlarm.sendCmdEnable = CMD_DISABLE;
+        onReportAutoLockAlarm();
     }
 }
 

@@ -31,6 +31,7 @@ typedef struct {
     cmd_setting_t ledFlashSetting;
     cmd_setting_t alarmSetting;
     cmd_setting_t reportOperateStatus;
+    cmd_setting_t reportAutoLockAlarm;
 }cmd_control_t;
 
 typedef struct {
@@ -52,6 +53,7 @@ typedef struct {
     uint8_t  address;
     uint8_t HoldOnDetectEnable;
     uint16_t HoldOnLatencyCnt;
+    uint8_t autoLockEnable;
     uint32_t lockDelay;
     uint32_t uid0;
     uint32_t uid1;
