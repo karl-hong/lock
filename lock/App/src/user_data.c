@@ -460,6 +460,28 @@ void onReportAutoLockAlarm(void)
     user_protocol_send_data(CMD_QUERY, OPTION_AUTO_LOCK_ALARM, buffer, pos);    
 }
 
+void onReportLockFaultAlarm(void)
+{
+    uint8_t buffer[23];
+    uint8_t pos = 0;
+    buffer[pos++] = lock.address;
+    buffer[pos++] = lock.faultControl.faultState;
+    buffer[pos++] = (lock.uid0 >> 24)& 0xff;
+    buffer[pos++] = (lock.uid0 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid0 >> 8) & 0xff;
+    buffer[pos++] = lock.uid0 & 0xff;
+    buffer[pos++] = (lock.uid1 >> 24)& 0xff;
+    buffer[pos++] = (lock.uid1 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid1 >> 8) & 0xff;
+    buffer[pos++] = lock.uid1 & 0xff;
+    buffer[pos++] = (lock.uid2 >> 24)& 0xff;
+    buffer[pos++] = (lock.uid2 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid2 >> 8) & 0xff;
+    buffer[pos++] = lock.uid2 & 0xff;
+
+    user_protocol_send_data(CMD_QUERY, OPTION_LOCK_FAIL_ALARM, buffer, pos);    
+}
+
 uint16_t user_read_flash(uint32_t address)
 {
     return *(__IO uint16_t*)address;
@@ -588,6 +610,11 @@ void user_reply_handle(void)
     if(lock.cmdControl.reportAutoLockAlarm.sendCmdEnable && !lock.cmdControl.reportAutoLockAlarm.sendCmdDelay){
         lock.cmdControl.reportAutoLockAlarm.sendCmdEnable = CMD_DISABLE;
         onReportAutoLockAlarm();
+    }
+
+    if(lock.cmdControl.reportLockFaultAlarm.sendCmdEnable && !lock.cmdControl.reportLockFaultAlarm.sendCmdDelay){
+        lock.cmdControl.reportLockFaultAlarm.sendCmdEnable = CMD_DISABLE;
+        onReportLockFaultAlarm();
     }
 }
 

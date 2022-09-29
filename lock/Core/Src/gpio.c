@@ -95,11 +95,13 @@ void lock_stop_detect(void)
 			lock.cmdControl.reportAutoLockAlarm.sendCmdDelay = 0;
 		}
 		lock.autoLockEnable = 0;
+		lock.faultControl.faultDectEnable = 0;
 	}else if(LOCK_TASK_STATE_FORWARD == lock.lockTaskState && !lock.lockState){
 		/* totally unlock and stop motor */
 		appSetMotorState(MOTOR_STOP);
 		lock.lockTaskState = LOCK_TASK_STATE_IDLE;
 		lock.autoLockEnable = 0;
+		lock.faultControl.faultDectEnable = 0;
 	}else if(LOCK_TASK_STATE_IDLE == lock.lockTaskState && stateChange){
 		if(lock.isReport){
 			lock.cmdControl.reportOperateStatus.sendCmdEnable = 1;
@@ -190,6 +192,9 @@ void MotorTask(void)
 			if(oldState != LOCK_TASK_STATE_FORWARD){
 				oldState = LOCK_TASK_STATE_FORWARD;
 				appSetMotorState(MOTOR_FORWARD);
+				lock.faultControl.faultState = LOCK_STATE_UNLOCK;
+				lock.faultControl.faultDectEnable = 1;
+				lock.faultControl.faultDectLatency = FAULT_DECT_TIME * DELAY_BASE;
 			}
 			break;
 		}
@@ -198,6 +203,9 @@ void MotorTask(void)
 			if(oldState != LOCK_TASK_STATE_BACKWARD){
 				oldState = LOCK_TASK_STATE_BACKWARD;
 				appSetMotorState(MOTOR_BACK);
+				lock.faultControl.faultState = LOCK_STATE_LOCK;
+				lock.faultControl.faultDectEnable = 1;
+				lock.faultControl.faultDectLatency = FAULT_DECT_TIME * DELAY_BASE;
 			}
 			break;
 		}

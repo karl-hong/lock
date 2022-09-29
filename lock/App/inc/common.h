@@ -13,6 +13,7 @@
 
 #define DELAY_BASE                  (10)//100ms*10 = 1s
 #define FLASH_FREQ                  (1)
+#define FAULT_DECT_TIME             (5)
 
 enum {
     CMD_DISABLE = 0,
@@ -25,6 +26,12 @@ typedef struct {
 }cmd_setting_t;
 
 typedef struct {
+    uint8_t faultState;
+    uint8_t faultDectEnable;
+    uint16_t faultDectLatency;
+}fault_control_t;
+
+typedef struct {
     cmd_setting_t reportStatus;
     cmd_setting_t operateResult;
     cmd_setting_t basicSetting;
@@ -32,6 +39,7 @@ typedef struct {
     cmd_setting_t alarmSetting;
     cmd_setting_t reportOperateStatus;
     cmd_setting_t reportAutoLockAlarm;
+    cmd_setting_t reportLockFaultAlarm;
 }cmd_control_t;
 
 typedef struct {
@@ -60,6 +68,7 @@ typedef struct {
     uint32_t uid2;
     cmd_control_t cmdControl;
     led_task_ctrl_t ledTask;
+    fault_control_t faultControl;
 }lock_ctrl_t;
 
 enum {

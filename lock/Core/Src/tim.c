@@ -22,6 +22,7 @@
 
 /* USER CODE BEGIN 0 */
 #include "common.h"
+#include "gpio.h"
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim14;
@@ -112,6 +113,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
       if(lock.cmdControl.reportAutoLockAlarm.sendCmdDelay > 0) lock.cmdControl.reportAutoLockAlarm.sendCmdDelay --;
 
+      if(lock.cmdControl.reportLockFaultAlarm.sendCmdDelay > 0) lock.cmdControl.reportLockFaultAlarm.sendCmdDelay --;
+
       if(lock.HoldOnDetectEnable){
           lock.HoldOnLatencyCnt ++;
           if(lock.HoldOnLatencyCnt >= (lock.lockDelay * DELAY_BASE)){
@@ -133,6 +136,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       }else{
         lock.ledTask.flashOn = 0;
         lock.ledTask.flashCnt = 0;
+      }
+
+      if(lock.faultControl.faultDectEnable && lock.faultControl.faultDectLatency > 0){
+          lock.faultControl.faultDectLatency --;
+          if(lock.faultControl.faultDectLatency == 0){
+            /* operate fail */
+            lock.faultControl.faultDectEnable = 0;
+            appSetMotorState(MOTOR_STOP);
+            lock.lockTaskState = LOCK_TASK_STATE_IDLE;
+            lock.autoLockEnable = 0;
+            lock.cmdControl.reportLockFaultAlarm.sendCmdEnable = CMD_ENABLE;
+            lock.cmdControl.reportLockFaultAlarm.sendCmdDelay = 0;
+          }
       }
 			
     }
