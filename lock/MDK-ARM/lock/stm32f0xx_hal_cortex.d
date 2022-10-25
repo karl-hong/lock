@@ -25,6 +25,7 @@ lock\stm32f0xx_hal_cortex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_f
 lock\stm32f0xx_hal_cortex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_flash_ex.h
 lock\stm32f0xx_hal_cortex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_i2c.h
 lock\stm32f0xx_hal_cortex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_i2c_ex.h
+lock\stm32f0xx_hal_cortex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_iwdg.h
 lock\stm32f0xx_hal_cortex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_pwr.h
 lock\stm32f0xx_hal_cortex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_pwr_ex.h
 lock\stm32f0xx_hal_cortex.o: ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim.h

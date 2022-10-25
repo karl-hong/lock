@@ -133,7 +133,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		static uint8_t lastGunState = 0;
 		if(lastGunState != lock.gunState){
 			lastGunState = lock.gunState;
-			lock.ledTask.state = LED_TASK_STATE_IDLE;
+			//lock.ledTask.state = LED_TASK_STATE_IDLE;
 		}
 	}
 }

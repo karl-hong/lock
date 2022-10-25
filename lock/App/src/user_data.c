@@ -97,7 +97,7 @@ out:
         else                lock.lockTaskState = LOCK_TASK_STATE_FORWARD;//unlock
 
         /* set led state here */
-        lock.ledTask.state = LED_TASK_STATE_FLASH;
+//        lock.ledTask.state = LED_TASK_STATE_FLASH;
     }
     
     lock.autoLockEnable = 0;
@@ -235,7 +235,8 @@ void onCmdSetLedFlash(uint8_t *data, uint16_t length, uint8_t ack)
 out:
     /* set led flash here */
     lock.ledFlashStatus = isFlash;
-    user_database_save();
+    //user_database_save();
+		lock.ledTask.state = isFlash;
     /* send ack msg here */
     if(ack){
         lock.cmdControl.ledFlashSetting.sendCmdEnable = CMD_ENABLE;
