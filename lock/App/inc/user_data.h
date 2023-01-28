@@ -12,6 +12,12 @@ void onCmdSetLedFlash(uint8_t *data, uint16_t length, uint8_t ack);
 
 void onCmdClrDevAlarmSetting(uint8_t *data, uint16_t length, uint8_t ack);
 
+void onCmdSetDeviceStatusByAddr(uint8_t *data, uint16_t length);
+
+void onCmdSetLedFlashByAddr(uint8_t *data, uint16_t length);
+
+void onCmdClrDevAlarmSettingByAddr(uint8_t *data, uint16_t length);
+
 void onReportDeviceStatus(void);
 
 void onReportDeviceOptResult(void);

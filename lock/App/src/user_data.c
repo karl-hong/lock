@@ -295,6 +295,104 @@ out:
     user_database_save();
 }
 
+void onCmdSetDeviceStatusByAddr(uint8_t *data, uint16_t length)
+{
+    uint16_t pos = 0;
+    uint8_t lockSetState;
+    uint16_t cmdLength = 2;
+    uint16_t addr;
+
+    if(NULL == data){
+        printf("[%s]data is null!\r\n", __FUNCTION__);
+        return;
+    }
+
+    if(cmdLength > length){
+        printf("[%s]length error!\r\n", __FUNCTION__);
+        return;
+    }
+
+    lockSetState = data[pos++];
+    addr = data[pos++];
+
+    if(lock.address != addr){
+        printf("[%s]addr is not matched!\r\n", __FUNCTION__);
+        return;
+    }
+out:
+    
+    if(lock.lockState != lockSetState){
+        /* set dev state here */
+        if(lockSetState)    lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock
+        else                lock.lockTaskState = LOCK_TASK_STATE_FORWARD;//unlock
+
+        /* set led state here */
+//        lock.ledTask.state = LED_TASK_STATE_FLASH;
+    }
+    
+    lock.autoLockEnable = 0;
+}
+
+void onCmdSetLedFlashByAddr(uint8_t *data, uint16_t length)
+{
+    uint16_t pos = 0;
+    uint8_t  isFlash;
+    uint16_t cmdLength = 2;
+    uint16_t addr;
+
+    if(NULL == data){
+        printf("[%s]data is null!\r\n", __FUNCTION__);
+        return;
+    }
+
+    if(cmdLength > length){
+        printf("[%s]length error!\r\n", __FUNCTION__);
+        return;
+    }   
+
+    isFlash = data[pos++];
+    addr = data[pos++];
+
+    if(lock.address != addr){
+        printf("[%s]addr is not matched!\r\n", __FUNCTION__);
+        return;
+    }
+out:
+    /* set led flash here */
+    lock.ledFlashStatus = isFlash;
+    //user_database_save();
+	lock.ledTask.state = isFlash;
+
+}
+
+void onCmdClrDevAlarmSettingByAddr(uint8_t *data, uint16_t length)
+{
+    uint16_t pos = 0;
+    uint16_t cmdLength = 1; 
+    uint16_t addr;
+
+    if(NULL == data){
+        printf("[%s]data is null!\r\n", __FUNCTION__);
+        return;
+    }
+
+    if(cmdLength > length){
+       printf("[%s]length error!\r\n", __FUNCTION__);
+        return;
+    }
+
+    addr = data[pos++];
+
+    if(lock.address != addr){
+        printf("[%s]addr is not matched!\r\n", __FUNCTION__);
+        return;
+    }
+out:
+    /* send ack msg here */
+    lock.alarmStatus = LOCK_ALARM_NONE;
+    user_database_save();
+}
+
 void onReportDeviceStatus(void)
 {
     uint8_t buffer[23];
