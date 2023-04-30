@@ -115,6 +115,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
       if(lock.cmdControl.reportLockFaultAlarm.sendCmdDelay > 0) lock.cmdControl.reportLockFaultAlarm.sendCmdDelay --;
 
+      if(lock.cmdControl.reportCheckSensorLockAlarm.sendCmdDelay > 0) lock.cmdControl.reportCheckSensorLockAlarm.sendCmdDelay --;
+
+      if(lock.sensorLockCnt > 0)  lock.sensorLockCnt --;
+
       if(lock.HoldOnDetectEnable){
           lock.HoldOnLatencyCnt ++;
           if(lock.HoldOnLatencyCnt >= (lock.lockDelay * DELAY_BASE)){

@@ -6,14 +6,16 @@
 #define DATABASE_MAGIC              (0xaaaa)
 
 #define DEFAULT_LOCK_DELAY          (30)
-#define DEFAULT_LOCK_REPLY_DELAY    (2)
+#define DEFAULT_LOCK_REPLY_DELAY    (0)
 #define DEFAULT_LOCK_LED_FLASH      (0)
 #define DEFAULT_LOCK_REPORT         (1)
 #define DEFAULT_LOCK_ALARM_STATUS   (0)
+#define DEFAULT_AUTO_LOCK_FLAG      (1)
+#define DEFAULT_SENSOR_LOCK_DELAY   (1)
 
 #define DELAY_BASE                  (10)//100ms*10 = 1s
 #define FLASH_FREQ                  (1)
-#define FAULT_DECT_TIME             (5)
+#define FAULT_DECT_TIME             (2)
 
 enum {
     CMD_DISABLE = 0,
@@ -40,6 +42,7 @@ typedef struct {
     cmd_setting_t reportOperateStatus;
     cmd_setting_t reportAutoLockAlarm;
     cmd_setting_t reportLockFaultAlarm;
+    cmd_setting_t reportCheckSensorLockAlarm;
 }cmd_control_t;
 
 typedef struct {
@@ -59,6 +62,9 @@ typedef struct {
     uint8_t  alarmStatus;
     uint8_t  isReport;
     uint8_t  address;
+    uint8_t autoLockFlag;
+    uint8_t sensorLockDelay;//检查枪舌状态，自动关锁延时
+    uint16_t sensorLockCnt;
     uint8_t HoldOnDetectEnable;
     uint16_t HoldOnLatencyCnt;
     uint8_t autoLockEnable;
@@ -103,6 +109,8 @@ typedef struct {
     uint16_t lockDelayHigh;
     uint16_t lockReplyDelay;
     uint16_t alarmStatus;
+    uint16_t autoLockFlag;
+    uint16_t sensorLockDelay;
 }database_t;
 
 

@@ -193,7 +193,7 @@ void MotorTask(void)
 				oldState = LOCK_TASK_STATE_FORWARD;
 				appSetMotorState(MOTOR_FORWARD);
 				lock.faultControl.faultState = LOCK_STATE_UNLOCK;
-				lock.faultControl.faultDectEnable = 1;
+				lock.faultControl.	faultDectEnable = 1;
 				lock.faultControl.faultDectLatency = FAULT_DECT_TIME * DELAY_BASE;
 			}
 			break;
@@ -270,6 +270,15 @@ void Led_Task(void)
 
 void Auto_Lock_Task(void)
 {
+	static uint8_t auto_lock_state = 0;
+	if(!lock.autoLockFlag){
+		/* forbid auto lock */
+		lock.HoldOnDetectEnable = 0;
+		lock.HoldOnLatencyCnt = 0;
+		goto auto_lock_by_gun_state;
+	}
+
+auto_lock_by_time:
 	if(lock.lockDetectState1  && !lock.lockDetectState2){
 		if(lock.HoldOnDetectEnable == 0){
 			lock.HoldOnDetectEnable = 1;
@@ -284,6 +293,44 @@ void Auto_Lock_Task(void)
 			lock.HoldOnLatencyCnt = 0;
 		}
 	}
+auto_lock_by_gun_state:
+	switch(auto_lock_state){
+		case 1:{
+			/* wait for delay time */
+			if(lock.sensorLockCnt) break;
+
+			if(lock.lockState != LOCK_STATE_UNLOCK) break;
+
+            lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock device
+
+			lock.cmdControl.reportCheckSensorLockAlarm.sendCmdEnable = CMD_ENABLE;
+            lock.cmdControl.reportCheckSensorLockAlarm.sendCmdDelay = 0;
+
+			auto_lock_state = 2;
+            
+			break;
+		}
+
+		case 2:{
+			/* idle, check lock state */
+			if(lock.gunState == 0 || lock.lockState != LOCK_STATE_UNLOCK){
+				auto_lock_state = 0;
+			}
+			break;
+		}
+
+		case 0:
+		default:{
+			if(lock.gunState && lock.lockState == LOCK_STATE_UNLOCK){
+				auto_lock_state = 1;
+				lock.sensorLockCnt = lock.sensorLockDelay * DELAY_BASE;
+			}else{
+				lock.sensorLockCnt = 0;
+			}
+			break;
+		}
+	}
+
 }
 
 void lock_state_init(void)
