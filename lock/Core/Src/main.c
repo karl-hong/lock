@@ -112,6 +112,7 @@ int main(void)
     Led_Task();
 		Auto_Lock_Task();
     user_reply_handle();
+		user_huart_error_check();
   }
   /* USER CODE END 3 */
 }

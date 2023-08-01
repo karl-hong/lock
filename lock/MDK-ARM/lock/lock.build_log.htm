@@ -26,16 +26,29 @@ Project File Date:  10/26/2022
 
 <h2>Output:</h2>
 Build target 'lock'
+compiling main.c...
 compiling gpio.c...
 ../Core/Src/gpio.c(120): warning:  #223-D: function "user_database_save" declared implicitly
                 user_database_save();
 ../Core/Src/gpio.c(281): warning:  #177-D: label "auto_lock_by_time" was declared but never referenced
   auto_lock_by_time:
 ../Core/Src/gpio.c: 2 warnings, 0 errors
+compiling tim.c...
+compiling usart.c...
+compiling user_data.c...
+..\App\src\user_data.c(330): warning:  #177-D: label "out" was declared but never referenced
+  out:
+..\App\src\user_data.c(368): warning:  #177-D: label "out" was declared but never referenced
+  out:
+..\App\src\user_data.c(398): warning:  #177-D: label "out" was declared but never referenced
+  out:
+..\App\src\user_data.c(639): warning:  #223-D: function "memset" declared implicitly
+      memset((uint8_t *)&lock, 0, sizeof(lock));
+..\App\src\user_data.c: 4 warnings, 0 errors
 linking...
-Program Size: Code=14584 RO-data=2256 RW-data=32 ZI-data=2672  
+Program Size: Code=14664 RO-data=2256 RW-data=36 ZI-data=2668  
 FromELF: creating hex file...
-"lock\lock.axf" - 0 Error(s), 2 Warning(s).
+"lock\lock.axf" - 0 Error(s), 6 Warning(s).
 
 <h2>Software Packages used:</h2>
 
