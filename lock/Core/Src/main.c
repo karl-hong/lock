@@ -78,7 +78,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+	user_database_init();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -95,7 +95,7 @@ int main(void)
   MX_TIM14_Init();
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
-  user_database_init();
+  printSetting();
 	lock_state_init();
   /* USER CODE END 2 */
 

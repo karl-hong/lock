@@ -12,6 +12,7 @@
 #define DEFAULT_LOCK_ALARM_STATUS   (0)
 #define DEFAULT_AUTO_LOCK_FLAG      (1)
 #define DEFAULT_SENSOR_LOCK_DELAY   (1)
+#define DEFAULT_BAUD_RATE_INDEX     (4)
 
 #define DELAY_BASE                  (10)//100ms*10 = 1s
 #define FLASH_FREQ                  (1)
@@ -43,6 +44,7 @@ typedef struct {
     cmd_setting_t reportAutoLockAlarm;
     cmd_setting_t reportLockFaultAlarm;
     cmd_setting_t reportCheckSensorLockAlarm;
+    cmd_setting_t singleModifyBaudRate;
 }cmd_control_t;
 
 typedef struct {
@@ -72,6 +74,7 @@ typedef struct {
     uint32_t uid0;
     uint32_t uid1;
     uint32_t uid2;
+    uint16_t baudRateIndex;
     cmd_control_t cmdControl;
     led_task_ctrl_t ledTask;
     fault_control_t faultControl;
@@ -111,6 +114,7 @@ typedef struct {
     uint16_t alarmStatus;
     uint16_t autoLockFlag;
     uint16_t sensorLockDelay;
+    uint16_t baudRateIndex;
 }database_t;
 
 

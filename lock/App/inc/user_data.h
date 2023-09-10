@@ -18,6 +18,8 @@ void onCmdSetLedFlashByAddr(uint8_t *data, uint16_t length);
 
 void onCmdClrDevAlarmSettingByAddr(uint8_t *data, uint16_t length);
 
+void onCmdModifyBaudRate(uint8_t *data, uint16_t length, uint8_t ack);
+
 void onReportDeviceStatus(void);
 
 void onReportDeviceOptResult(void);
@@ -34,10 +36,14 @@ void onReportAutoLockAlarm(void);
 
 void onReportLockFaultAlarm(void);
 
+void onReportSingleModifyBaudRate(void);
+
 void user_database_init(void);
 
 void user_database_save(void);
 
 void user_reply_handle(void);
+
+void printSetting(void);
 
 #endif
