@@ -193,7 +193,7 @@ void MotorTask(void)
 				oldState = LOCK_TASK_STATE_FORWARD;
 				appSetMotorState(MOTOR_FORWARD);
 				lock.faultControl.faultState = LOCK_STATE_UNLOCK;
-				lock.faultControl.	faultDectEnable = 1;
+				lock.faultControl.faultDectEnable = 1;
 				lock.faultControl.faultDectLatency = FAULT_DECT_TIME * DELAY_BASE;
 			}
 			break;
@@ -296,10 +296,12 @@ auto_lock_by_time:
 auto_lock_by_gun_state:
 	switch(auto_lock_state){
 		case 1:{
+			if(lock.lockState != LOCK_STATE_UNLOCK || !lock.gunState){
+				auto_lock_state = 0;
+				break;
+			}
 			/* wait for delay time */
 			if(lock.sensorLockCnt) break;
-
-			if(lock.lockState != LOCK_STATE_UNLOCK) break;
 
             lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock device
 
