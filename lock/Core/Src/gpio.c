@@ -73,6 +73,7 @@ void MX_GPIO_Init(void)
 void lock_stop_detect(void)
 {
 	static uint8_t lastState = 0;
+	
 	uint8_t stateChange = 0;
 	if(lock.lockDetectState1  && !lock.lockDetectState2){
 		lock.lockState = LOCK_STATE_UNLOCK;//unlock state
@@ -341,5 +342,28 @@ void lock_state_init(void)
 	lock.lockDetectState2 = HAL_GPIO_ReadPin(GPIOB, LockStateDetect2_Pin);
 	lock.gunState = HAL_GPIO_ReadPin(GPIOB, GunStateDetect_Pin);
 	lock_stop_detect();
+}
+
+void checkGunStateTask(void)
+{
+	static int lastGunState = -1;
+	static int count = 0;
+
+	if(lastGunState == -1){
+		lastGunState = lock.gunState;
+		return;
+	}
+
+	if(lastGunState != lock.gunState){
+		count ++;
+		if(count >= 5){
+			count = 0;
+			lastGunState = lock.gunState;
+			lock.cmdControl.reportGunState.sendCmdEnable = CMD_ENABLE;
+            lock.cmdControl.reportGunState.sendCmdDelay = 0;
+		}
+	}else{
+		count = 0;
+	}
 }
 /* USER CODE END 2 */

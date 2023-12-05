@@ -38,6 +38,8 @@ void onReportLockFaultAlarm(void);
 
 void onReportSingleModifyBaudRate(void);
 
+void onReportGunStatus(void);
+
 void user_database_init(void);
 
 void user_database_save(void);

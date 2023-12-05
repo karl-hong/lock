@@ -95,6 +95,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 
 /* USER CODE BEGIN 1 */
 extern void appSetLedState(uint8_t led, uint8_t state);
+extern void checkGunStateTask(void);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if(htim->Instance == TIM14){
@@ -154,6 +155,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             lock.cmdControl.reportLockFaultAlarm.sendCmdDelay = 0;
           }
       }
+
+	  checkGunStateTask();
 			
     }
 }

@@ -698,6 +698,31 @@ void onReportSingleModifyBaudRate(void)
     while(1);//wait for watchdog reset 
 }
 
+void onReportGunStatus(void)
+{
+	uint8_t buffer[40];
+    uint8_t pos = 0;
+	/* addr */
+	buffer[pos++] = lock.address;
+	/* alarm type(gun state) */
+	buffer[pos++] = lock.gunState;
+	/* uid */    
+    buffer[pos++] = (lock.uid0 >> 24)& 0xff;
+    buffer[pos++] = (lock.uid0 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid0 >> 8) & 0xff;
+    buffer[pos++] = lock.uid0 & 0xff;
+    buffer[pos++] = (lock.uid1 >> 24)& 0xff;
+    buffer[pos++] = (lock.uid1 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid1 >> 8) & 0xff;
+    buffer[pos++] = lock.uid1 & 0xff;
+    buffer[pos++] = (lock.uid2 >> 24)& 0xff;
+    buffer[pos++] = (lock.uid2 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid2 >> 8) & 0xff;
+    buffer[pos++] = lock.uid2 & 0xff;
+
+    user_protocol_send_data(CMD_QUERY, OPTION_REPORT_GUN_STATE, buffer, pos);   	
+}
+
 uint16_t user_read_flash(uint32_t address)
 {
     return *(__IO uint16_t*)address;
@@ -843,6 +868,11 @@ void user_reply_handle(void)
     if(lock.cmdControl.singleModifyBaudRate.sendCmdEnable && !lock.cmdControl.singleModifyBaudRate.sendCmdDelay){
         lock.cmdControl.singleModifyBaudRate.sendCmdEnable = CMD_DISABLE;
         onReportSingleModifyBaudRate();
+    }
+
+	if(lock.cmdControl.reportGunState.sendCmdEnable && !lock.cmdControl.reportGunState.sendCmdDelay){
+        lock.cmdControl.reportGunState.sendCmdEnable = CMD_DISABLE;
+        onReportGunStatus();
     }
 }
 

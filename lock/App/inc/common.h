@@ -45,6 +45,7 @@ typedef struct {
     cmd_setting_t reportLockFaultAlarm;
     cmd_setting_t reportCheckSensorLockAlarm;
     cmd_setting_t singleModifyBaudRate;
+	cmd_setting_t reportGunState;
 }cmd_control_t;
 
 typedef struct {
