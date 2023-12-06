@@ -450,24 +450,35 @@ out:
 
 void onReportDeviceStatus(void)
 {
-    uint8_t buffer[40];
+    uint8_t buffer[50];
     uint8_t pos = 0;
+	/* addr */
     buffer[pos++] = lock.address;
+	/* lock state */
     buffer[pos++] = lock.lockState;
+	/* gun state */
     buffer[pos++] = lock.gunState;
-
+	/* auto lock delay time */
     buffer[pos++] = (lock.lockDelay >> 16) & 0xff;
     buffer[pos++] = (lock.lockDelay >> 8) & 0xff;
     buffer[pos++] = lock.lockDelay & 0xff;
-
+	/* auto lock enable flag */
     buffer[pos++] = lock.autoLockFlag;
-
+	/* lock reply delay time */
     buffer[pos++] = (lock.lockReplyDelay >> 8) & 0xff;
     buffer[pos++] = lock.lockReplyDelay & 0xff;
+	/* led status */
     buffer[pos++] = lock.ledFlashStatus;
+	/* alarm status */
     buffer[pos++] = lock.alarmStatus;
+	/* auto report enable flag */
     buffer[pos++] = lock.isReport;
+	/* delay time of auto lock by gun status */
     buffer[pos++] = lock.sensorLockDelay;
+	/* sw version */
+	buffer[pos++] = (SW_VERSION >> 8) & 0xff;
+    buffer[pos++] = SW_VERSION & 0xff;
+	/* uid */
     buffer[pos++] = (lock.uid0 >> 24)& 0xff;
     buffer[pos++] = (lock.uid0 >> 16) & 0xff;
     buffer[pos++] = (lock.uid0 >> 8) & 0xff;

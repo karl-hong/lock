@@ -17,6 +17,7 @@
 #define DELAY_BASE                  (10)//100ms*10 = 1s
 #define FLASH_FREQ                  (1)
 #define FAULT_DECT_TIME             (2)
+#define SW_VERSION					(5)//版本号
 
 enum {
     CMD_DISABLE = 0,

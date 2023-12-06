@@ -356,7 +356,7 @@ void checkGunStateTask(void)
 
 	if(lastGunState != lock.gunState){
 		count ++;
-		if(count >= 5){
+		if(count >= 1){
 			count = 0;
 			lastGunState = lock.gunState;
 			lock.cmdControl.reportGunState.sendCmdEnable = CMD_ENABLE;
