@@ -272,6 +272,7 @@ void Led_Task(void)
 void Auto_Lock_Task(void)
 {
 	static uint8_t auto_lock_state = 0;
+	static uint8_t stLastGunState = 0xff;
 	if(!lock.autoLockFlag){
 		/* forbid auto lock */
 		lock.HoldOnDetectEnable = 0;
@@ -297,6 +298,7 @@ auto_lock_by_time:
 auto_lock_by_gun_state:
 	switch(auto_lock_state){
 		case 1:{
+			/* 等待延时时间 */
 			if(lock.lockState != LOCK_STATE_UNLOCK || !lock.gunState){
 				auto_lock_state = 0;
 				break;
@@ -309,27 +311,26 @@ auto_lock_by_gun_state:
 			lock.cmdControl.reportCheckSensorLockAlarm.sendCmdEnable = CMD_ENABLE;
             lock.cmdControl.reportCheckSensorLockAlarm.sendCmdDelay = 0;
 
-			auto_lock_state = 2;
+			auto_lock_state = 0;
             
-			break;
-		}
-
-		case 2:{
-			/* idle, check lock state */
-			if(lock.gunState == 0 || lock.lockState != LOCK_STATE_UNLOCK){
-				auto_lock_state = 0;
-			}
 			break;
 		}
 
 		case 0:
 		default:{
-			if(lock.gunState && lock.lockState == LOCK_STATE_UNLOCK){
-				auto_lock_state = 1;
-				lock.sensorLockCnt = lock.sensorLockDelay * DELAY_BASE;
-			}else{
-				lock.sensorLockCnt = 0;
-			}
+			if(stLastGunState == 0xff){
+				stLastGunState = lock.gunState;//init value
+			}else if(stLastGunState != lock.gunState){
+					 /* state change */
+					stLastGunState = lock.gunState;//change last state
+					if(lock.gunState && lock.lockState == LOCK_STATE_UNLOCK){
+						/* 枪在位 */
+						auto_lock_state = 1;
+						lock.sensorLockCnt = lock.sensorLockDelay * DELAY_BASE;
+					}else{
+						lock.sensorLockCnt = 0;
+					}
+			}			
 			break;
 		}
 	}
