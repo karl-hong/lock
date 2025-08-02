@@ -30,7 +30,7 @@
 /* Configure GPIO                                                             */
 /*----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
-
+static uint32_t s_MotorRunningCnt = 0;
 /* USER CODE END 1 */
 
 /** Configure pins
@@ -365,6 +365,37 @@ void checkGunStateTask(void)
 		}
 	}else{
 		count = 0;
+	}
+}
+
+
+/**s
+ * 
+ * 限制开锁时间
+ * 1、下开锁指令后，等待150ms，停止马达转动
+ * 2、马达停止转动后，等待250ms（400ms），霍尔检测到位。则停止。如果定时器检测到霍尔到位也会停止。
+ * 如果250ms后霍尔没有到位，则继续转动马达。
+ * 3、继续转动马达50ms后，停止转动。
+ * 
+ * 
+ */
+void lock_stop_wait_done(void)
+{
+	if(lock.lockTaskState == LOCK_TASK_STATE_FORWARD || lock.lockTaskState == LOCK_TASK_STATE_BACKWARD){
+		uint32_t curTick = HAL_GetTick();
+		if(s_MotorRunningCnt == 0){
+			s_MotorRunningCnt = curTick;
+		}
+
+		if(curTick >= s_MotorRunningCnt + 450){// 400ms
+			appSetMotorState(MOTOR_STOP);
+		}else if(curTick >= s_MotorRunningCnt + 400){
+			appSetMotorState(lock.lockTaskState == LOCK_TASK_STATE_FORWARD ? MOTOR_FORWARD : MOTOR_BACK);
+		}else if(curTick >= s_MotorRunningCnt + 150){
+			appSetMotorState(MOTOR_STOP);
+		}
+	}else{
+		s_MotorRunningCnt = 0;
 	}
 }
 /* USER CODE END 2 */

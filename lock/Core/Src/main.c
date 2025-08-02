@@ -113,6 +113,7 @@ int main(void)
 		Auto_Lock_Task();
     user_reply_handle();
 		user_huart_error_check();
+    lock_stop_wait_done();
   }
   /* USER CODE END 3 */
 }

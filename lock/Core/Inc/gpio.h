@@ -59,6 +59,7 @@ void MotorTask(void);
 void Led_Task(void);
 void Auto_Lock_Task(void);
 void lock_state_init(void);
+void lock_stop_wait_done(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
