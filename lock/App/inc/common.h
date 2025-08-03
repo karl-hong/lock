@@ -1,6 +1,12 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 #include <stdint.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h> 
+// #include <math.h>
+#include "main.h"
+#include "flash_if.h"
 
 #define DATABASE_START_ADDR         (0x0800F000)
 #define DATABASE_MAGIC              (0xaaaa)
@@ -18,6 +24,19 @@
 #define FLASH_FREQ                  (1)
 #define FAULT_DECT_TIME             (2)
 #define SW_VERSION					(7)//版本号
+
+#define BROADCAST_ADDR              (0xFF)
+#define CHECK_ADDR_INVALID(addr)    (BROADCAST_ADDR != addr && addr != lock.address)
+#define CHECK_ACK(addr)             (addr == lock.address)
+#define IS_ADDR_INVALID(addr)        (addr != lock.address)
+#define IS_UID_INVALID(uid0, uid1, uid2)        (uid0 != lock.uid0 || uid1 != lock.uid1 || uid2 != lock.uid2)
+
+enum {
+    STATUS_REQUEST_UPGRADE = 1,
+    STATUS_UPGRADE_GOING,
+    STATUS_UPGRADE_SUCCESS,
+};
+#define PACKET_SIZE                 (32)
 
 enum {
     CMD_DISABLE = 0,
@@ -47,6 +66,12 @@ typedef struct {
     cmd_setting_t reportCheckSensorLockAlarm;
     cmd_setting_t singleModifyBaudRate;
 	cmd_setting_t reportGunState;
+    cmd_setting_t setAddrByUid;  
+    cmd_setting_t getInfoByAddr;
+    cmd_setting_t setAddrByAddr;
+    cmd_setting_t clearUartBuffer;
+    cmd_setting_t factoryCmd;
+    cmd_setting_t upgrade;
 }cmd_control_t;
 
 typedef struct {
@@ -66,6 +91,7 @@ typedef struct {
     uint8_t  alarmStatus;
     uint8_t  isReport;
     uint8_t  address;
+    uint8_t oldAddr;
     uint8_t autoLockFlag;
     uint8_t sensorLockDelay;//检查枪舌状态，自动关锁延时
     uint16_t sensorLockCnt;
@@ -118,6 +144,18 @@ typedef struct {
     uint16_t sensorLockDelay;
     uint16_t baudRateIndex;
 }database_t;
+
+typedef struct {
+    uint16_t magic;
+    uint16_t address;
+    uint16_t deviceCmd;
+    uint16_t baudIndex;
+    uint32_t upgradeFlag;
+    uint32_t packetIndex;
+    uint32_t packetSize;
+    uint8_t packetData[PACKET_SIZE];
+    uint16_t upgradeStatus;
+}upgrade_t;
 
 
 extern lock_ctrl_t lock;

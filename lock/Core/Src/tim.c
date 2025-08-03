@@ -23,6 +23,7 @@
 /* USER CODE BEGIN 0 */
 #include "common.h"
 #include "gpio.h"
+#include "user_data.h"
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim14;
@@ -100,23 +101,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if(htim->Instance == TIM14){
 			/* 100ms */
-      if(lock.cmdControl.reportStatus.sendCmdDelay > 0) lock.cmdControl.reportStatus.sendCmdDelay --;
-
-      if(lock.cmdControl.operateResult.sendCmdDelay > 0) lock.cmdControl.operateResult.sendCmdDelay --;
-
-      if(lock.cmdControl.basicSetting.sendCmdDelay > 0) lock.cmdControl.basicSetting.sendCmdDelay --;
-
-      if(lock.cmdControl.ledFlashSetting.sendCmdDelay > 0) lock.cmdControl.ledFlashSetting.sendCmdDelay --;
-
-      if(lock.cmdControl.alarmSetting.sendCmdDelay > 0) lock.cmdControl.alarmSetting.sendCmdDelay --;
-
-      if(lock.cmdControl.reportOperateStatus.sendCmdDelay > 0) lock.cmdControl.reportOperateStatus.sendCmdDelay --;
-
-      if(lock.cmdControl.reportAutoLockAlarm.sendCmdDelay > 0) lock.cmdControl.reportAutoLockAlarm.sendCmdDelay --;
-
-      if(lock.cmdControl.reportLockFaultAlarm.sendCmdDelay > 0) lock.cmdControl.reportLockFaultAlarm.sendCmdDelay --;
-
-      if(lock.cmdControl.reportCheckSensorLockAlarm.sendCmdDelay > 0) lock.cmdControl.reportCheckSensorLockAlarm.sendCmdDelay --;
+      user_check_report_delay();
 
       if(lock.sensorLockCnt > 0)  lock.sensorLockCnt --;
 

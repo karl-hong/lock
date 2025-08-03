@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "iwdg.h"
 #include "tim.h"
 #include "usart.h"
@@ -59,7 +60,12 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void InterruptRemap(void)
+{
+	__HAL_RCC_SYSCFG_CLK_ENABLE();
+	memcpy((void*)RAM_ADDRESS_START, (void*)APPLICATION_ADDRESS, VECTOR_SIZE);
+	__HAL_SYSCFG_REMAPMEMORY_SRAM();
+}
 /* USER CODE END 0 */
 
 /**
@@ -69,7 +75,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	InterruptRemap();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -90,6 +96,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_TIM14_Init();
@@ -97,6 +104,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   printSetting();
 	lock_state_init();
+  sync_boot_env();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -113,6 +121,7 @@ int main(void)
 		Auto_Lock_Task();
     user_reply_handle();
 		user_huart_error_check();
+    lock_stop_wait_done();
   }
   /* USER CODE END 3 */
 }
