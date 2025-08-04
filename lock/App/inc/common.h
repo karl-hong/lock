@@ -23,7 +23,7 @@
 #define DELAY_BASE                  (10)//100ms*10 = 1s
 #define FLASH_FREQ                  (1)
 #define FAULT_DECT_TIME             (2)
-#define SW_VERSION					(7)//版本号
+#define SW_VERSION					(0x0701)//版本号v7.1  20250804
 
 #define BROADCAST_ADDR              (0xFF)
 #define CHECK_ADDR_INVALID(addr)    (BROADCAST_ADDR != addr && addr != lock.address)
