@@ -98,12 +98,16 @@ void lock_stop_detect(void)
 		}
 		lock.autoLockEnable = 0;
 		lock.faultControl.faultDectEnable = 0;
+		lock.cmdControl.operateResult.sendCmdEnable = CMD_ENABLE;
+    	lock.cmdControl.operateResult.sendCmdDelay = 0;
 	}else if(LOCK_TASK_STATE_FORWARD == lock.lockTaskState && !lock.lockState){
 		/* totally unlock and stop motor */
 		appSetMotorState(MOTOR_STOP);
 		lock.lockTaskState = LOCK_TASK_STATE_IDLE;
 		lock.autoLockEnable = 0;
 		lock.faultControl.faultDectEnable = 0;
+		lock.cmdControl.operateResult.sendCmdEnable = CMD_ENABLE;
+    	lock.cmdControl.operateResult.sendCmdDelay = 0;
 	}else if(LOCK_TASK_STATE_IDLE == lock.lockTaskState && stateChange){
 		if(lock.isReport){
 			lock.cmdControl.reportOperateStatus.sendCmdEnable = 1;

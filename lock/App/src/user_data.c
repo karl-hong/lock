@@ -105,8 +105,8 @@ void onCmdSetDeviceStatus(uint8_t *data, uint8_t length)
     lock.autoLockEnable = 0;
 
     /* send ack msg here */
-    lock.cmdControl.operateResult.sendCmdEnable = CMD_ENABLE;
-    lock.cmdControl.operateResult.sendCmdDelay = lock.lockReplyDelay * DELAY_BASE;
+    // lock.cmdControl.operateResult.sendCmdEnable = CMD_ENABLE;
+    // lock.cmdControl.operateResult.sendCmdDelay = lock.lockReplyDelay * DELAY_BASE;
 }
 
 void onCmdModifyDeviceSetting(uint8_t *data, uint8_t length)
