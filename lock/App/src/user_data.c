@@ -100,6 +100,9 @@ void onCmdSetDeviceStatus(uint8_t *data, uint8_t length)
         /* set dev state here */
         if(lockSetState)    lock.lockTaskState = LOCK_TASK_STATE_BACKWARD;//lock
         else                lock.lockTaskState = LOCK_TASK_STATE_FORWARD;//unlock
+    }else{//状态相同，立刻回复
+        lock.cmdControl.operateResult.sendCmdEnable = CMD_ENABLE;
+        lock.cmdControl.operateResult.sendCmdDelay = 0;
     }
     
     lock.autoLockEnable = 0;
