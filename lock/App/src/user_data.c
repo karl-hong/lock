@@ -483,7 +483,7 @@ void onReportLockFaultAlarm(void)
     uint8_t buffer[23];
     uint8_t pos = 0;
     
-    // buffer[pos++] = lock.faultControl.faultState;
+    buffer[pos++] = lock.faultControl.faultState;
     buffer[pos++] = lock.address;
     user_protocol_send_data(CMD_QUERY, OPTION_LOCK_FAIL_ALARM, buffer, pos);    
 }
