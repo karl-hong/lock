@@ -73,7 +73,7 @@ void MX_GPIO_Init(void)
 /* USER CODE BEGIN 2 */
 void lock_stop_detect(void)
 {
-	static uint8_t lastState = 0;
+	static int lastState = -1;
 	
 	uint8_t stateChange = 0;
 	if(lock.lockDetectState1  && !lock.lockDetectState2){
@@ -84,8 +84,8 @@ void lock_stop_detect(void)
 	}
 	
 	if(lastState != lock.lockState){
+		if(lastState != -1) stateChange = 1;
 		lastState = lock.lockState;
-		stateChange = 1;
 	}
 
 	if(LOCK_TASK_STATE_BACKWARD == lock.lockTaskState && lock.lockState){

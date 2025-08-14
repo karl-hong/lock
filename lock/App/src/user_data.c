@@ -399,7 +399,7 @@ void onReportDeviceStatus(void)
     /* addr */
     buffer[pos++] = lock.address;
     
-    user_protocol_send_data(CMD_ACK, OPTION_QUERY_SINGLE_LOCK_STATUS, buffer, sizeof(buffer));       
+    user_protocol_send_data(CMD_ACK, OPTION_QUERY_SINGLE_LOCK_STATUS, buffer, pos);       
 }
 
 void onReportDeviceOptResult(void)
@@ -462,6 +462,20 @@ void onReportDevAlarm(void)
 {
     uint8_t buffer[23];
     uint8_t pos = 0;
+
+    /* UID */
+    buffer[pos++] = (lock.uid0 >> 24) & 0xff;
+    buffer[pos++] = (lock.uid0 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid0 >> 8) & 0xff;
+    buffer[pos++] = lock.uid0 & 0xff;
+    buffer[pos++] = (lock.uid1 >> 24) & 0xff;
+    buffer[pos++] = (lock.uid1 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid1 >> 8) & 0xff;
+    buffer[pos++] = lock.uid1 & 0xff;
+    buffer[pos++] = (lock.uid2 >> 24) & 0xff;
+    buffer[pos++] = (lock.uid2 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid2 >> 8) & 0xff;
+    buffer[pos++] = lock.uid2 & 0xff;
     
     buffer[pos++] = lock.lockState;
     buffer[pos++] = lock.address;
@@ -518,6 +532,20 @@ void onReportGunStatus(void)
 {
 	uint8_t buffer[40];
     uint8_t pos = 0;
+
+    /* UID */
+    buffer[pos++] = (lock.uid0 >> 24) & 0xff;
+    buffer[pos++] = (lock.uid0 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid0 >> 8) & 0xff;
+    buffer[pos++] = lock.uid0 & 0xff;
+    buffer[pos++] = (lock.uid1 >> 24) & 0xff;
+    buffer[pos++] = (lock.uid1 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid1 >> 8) & 0xff;
+    buffer[pos++] = lock.uid1 & 0xff;
+    buffer[pos++] = (lock.uid2 >> 24) & 0xff;
+    buffer[pos++] = (lock.uid2 >> 16) & 0xff;
+    buffer[pos++] = (lock.uid2 >> 8) & 0xff;
+    buffer[pos++] = lock.uid2 & 0xff;
 	
 	/* alarm type(gun state) */
 	buffer[pos++] = lock.gunState;
